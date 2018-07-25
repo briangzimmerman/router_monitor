@@ -15,7 +15,6 @@ class TpLink {
         this.loggedIn = false;
         this.sessionId = false;
         this.cookie = 'Basic ' + Buffer.from(`${username}:` + md5(password)).toString('base64');
-        this.login();
     }
 //------------------------------------------------------------------------------
 
