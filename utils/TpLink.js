@@ -12,9 +12,13 @@ const trafficArrayRegex = /var statistList = (.*?);\s*/;
 class TpLink {
     constructor(ip, username, password) {
         this.ip = ip;
-        this.loggedIn = false;
         this.sessionId = false;
         this.cookie = 'Basic ' + Buffer.from(`${username}:` + md5(password)).toString('base64');
+    }
+//------------------------------------------------------------------------------
+
+    isLoggedIn() {
+        return this.sessionId != false;
     }
 //------------------------------------------------------------------------------
 
@@ -35,13 +39,12 @@ class TpLink {
             if(matches.length != 2) { return; }
 
             this.sessionId = matches[1];
-            this.loggedIn = true;
         });
     }
 //------------------------------------------------------------------------------
 
     logout() {
-        if(!this.loggedIn) { return; }
+        if(!this.isLoggedIn()) { return; }
 
         return rp({
             uri: util.format(logoutURL, this.ip, this.sessionId),
@@ -51,14 +54,13 @@ class TpLink {
             }
         })
         .then(() => {
-            this.loggedIn = false;
             this.sessionId = false;
         });
     }
 //------------------------------------------------------------------------------
 
     reboot() {
-        if(!this.loggedIn) { return; }
+        if(!this.isLoggedIn()) { return; }
 
         return rp({
             uri: util.format(rebootURL, this.ip, this.sessionId) + '?Reboot=Reboot',
@@ -68,14 +70,13 @@ class TpLink {
             }
         })
         .then(() => {
-            this.loggedIn = false;
             this.sessionId = false;
         });
     }
 //------------------------------------------------------------------------------
 
     getTraffic() {
-        if(!this.loggedIn) { return; }
+        if(!this.isLoggedIn()) { return; }
 
         return rp({
             uri: util.format(trafficURL, this.ip, this.sessionId),
