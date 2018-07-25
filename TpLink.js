@@ -10,7 +10,7 @@ const sessionRegex = /http:\/\/[0-9a-zA-Z.]+\/([A-Z]{16})\/userRpm\/Index\.htm/;
 const trafficArrayRegex = /var statistList = (.*?);\s*/;
 
 class TpLink {
-    constructor(username, password, ip) {
+    constructor(ip, username, password) {
         this.ip = ip;
         this.loggedIn = false;
         this.sessionId = false;
