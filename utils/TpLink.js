@@ -66,6 +66,10 @@ class TpLink {
                 'Authorization': this.cookie,
                 'Referer': util.format(rebootURL, this.ip, this.sessionId)
             }
+        })
+        .then(() => {
+            this.loggedIn = false;
+            this.sessionId = false;
         });
     }
 //------------------------------------------------------------------------------
