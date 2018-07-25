@@ -21,4 +21,12 @@ class TpLink {
             console.log(response);
         });
     }
+
+    logout() {
+
+    }
+
+    getTraffic() {
+        
+    }
 }
