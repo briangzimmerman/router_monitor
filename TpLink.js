@@ -6,6 +6,8 @@ const loginURL = 'http://%s/userRpm/LoginRpm.htm?Save=Save';
 const logoutURL = 'http://%s/%s/userRpm/LogoutRpm.htm';
 const rebootURL = 'http://%s/%s/userRpm/SysRebootRpm.htm';
 const trafficURL = 'http://%s/%s/userRpm/StatusRpm.htm';
+const sessionRegex = '';
+const trafficArrayRegex = '';
 
 class TpLink {
     constructor(username, password, ip) {
