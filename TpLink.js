@@ -6,8 +6,8 @@ const loginURL = 'http://%s/userRpm/LoginRpm.htm?Save=Save';
 const logoutURL = 'http://%s/%s/userRpm/LogoutRpm.htm';
 const rebootURL = 'http://%s/%s/userRpm/SysRebootRpm.htm';
 const trafficURL = 'http://%s/%s/userRpm/StatusRpm.htm';
-const sessionRegex = '';
-const trafficArrayRegex = '';
+const sessionRegex = /http:\/\/[0-9a-zA-Z.]+\/([A-Z]{16})\/userRpm\/Index\.htm/;
+const trafficArrayRegex = /var statistList = (.*?);\s*/;
 
 class TpLink {
     constructor(username, password, ip) {
@@ -30,6 +30,7 @@ class TpLink {
         })
         .then((response) => {
             console.log(response);
+            console.log(response.match(sessionRegex));
         });
     }
 //------------------------------------------------------------------------------
@@ -70,6 +71,9 @@ class TpLink {
         })
         .then((response) => {
             console.log(response);
+            var matches = response.match(trafficArrayRegex);
+            console.log(matches);
+            console.log(eval(matches[1]));
         });
     }
 }
