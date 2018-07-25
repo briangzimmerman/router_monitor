@@ -1,5 +1,11 @@
 const md5 = require('md5');
 const rp = require('request-promise');
+const util = require('util');
+
+const loginURL = 'http://%s/userRpm/LoginRpm.htm?Save=Save';
+const logoutURL = 'http://%s/%s/userRpm/LogoutRpm.htm';
+const rebootURL = 'http://%s/%s/userRpm/SysRebootRpm.htm';
+const trafficURL = 'http://%s/%s/userRpm/StatusRpm.htm';
 
 class TpLink {
     constructor(username, password, ip) {
@@ -12,7 +18,7 @@ class TpLink {
 
     login() {
         return rp({
-            uri: `http://${this.ip}/userRpm/LoginRpm.htm?Save=Save`,
+            uri: util.format(loginURL, this.ip),
             headers: {
                 'Authorization': this.cookie
             }
@@ -23,10 +29,39 @@ class TpLink {
     }
 
     logout() {
+        if(!this.loggedIn) { return; }
 
+        return rp({
+            uri: util.format(logoutURL, this.ip, this.sessionId),
+            headers: {
+                'referer': util.format(trafficURL, this.ip, this.sessionId)
+            }
+        })
+        .then(() => {
+            this.loggedIn = false;
+            this.sessionId = false;
+        });
+    }
+
+    reboot() {
+        if(!this.loggedIn) { return; }
+
+        return rp({
+            uri: util.format(logoutURL, this.ip, this.sessionId),
+            headers: {
+                'referer': util.format(trafficURL, this.ip, this.sessionId)
+            }
+        });
     }
 
     getTraffic() {
-        
+        if(!this.loggedIn) { return; }
+
+        rp({
+            uri: util.format(trafficURL, this.ip, this.sessionId)
+        })
+        .then((response) => {
+            console.log(response);
+        })
     }
 }
