@@ -46,7 +46,8 @@ class TpLink {
         return rp({
             uri: util.format(logoutURL, this.ip, this.sessionId),
             headers: {
-                'referer': util.format(trafficURL, this.ip, this.sessionId)
+                'Authorization': this.cookie,
+                'Referer': util.format(trafficURL, this.ip, this.sessionId)
             }
         })
         .then(() => {
@@ -60,9 +61,10 @@ class TpLink {
         if(!this.loggedIn) { return; }
 
         return rp({
-            uri: util.format(rebootURL, this.ip, this.sessionId),
+            uri: util.format(rebootURL, this.ip, this.sessionId) + '?Reboot=Reboot',
             headers: {
-                'referer': util.format(trafficURL, this.ip, this.sessionId)
+                'Authorization': this.cookie,
+                'Referer': util.format(rebootURL, this.ip, this.sessionId)
             }
         });
     }
@@ -72,7 +74,11 @@ class TpLink {
         if(!this.loggedIn) { return; }
 
         return rp({
-            uri: util.format(trafficURL, this.ip, this.sessionId)
+            uri: util.format(trafficURL, this.ip, this.sessionId),
+            headers: {
+                'Authorization': this.cookie,
+                'Referer': util.format(trafficURL, this.ip, this.sessionId)
+            }
         })
         .then((response) => {
             console.log(response);
