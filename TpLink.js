@@ -15,6 +15,7 @@ class TpLink {
         this.cookie = 'Basic ' + Buffer.from(`${username}:` + md5(password)).toString('base64');
         rp({uri: `http://${this.ip}`}).then(login);
     }
+//------------------------------------------------------------------------------
 
     login() {
         return rp({
@@ -27,6 +28,7 @@ class TpLink {
             console.log(response);
         });
     }
+//------------------------------------------------------------------------------
 
     logout() {
         if(!this.loggedIn) { return; }
@@ -42,17 +44,19 @@ class TpLink {
             this.sessionId = false;
         });
     }
+//------------------------------------------------------------------------------
 
     reboot() {
         if(!this.loggedIn) { return; }
 
         return rp({
-            uri: util.format(logoutURL, this.ip, this.sessionId),
+            uri: util.format(rebootURL, this.ip, this.sessionId),
             headers: {
                 'referer': util.format(trafficURL, this.ip, this.sessionId)
             }
         });
     }
+//------------------------------------------------------------------------------
 
     getTraffic() {
         if(!this.loggedIn) { return; }
@@ -62,6 +66,8 @@ class TpLink {
         })
         .then((response) => {
             console.log(response);
-        })
+        });
     }
 }
+
+module.exports = TpLink;
