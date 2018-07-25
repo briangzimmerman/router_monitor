@@ -15,16 +15,19 @@ class TpLink {
         this.loggedIn = false;
         this.sessionId = false;
         this.cookie = 'Basic ' + Buffer.from(`${username}:` + md5(password)).toString('base64');
-        rp({uri: `http://${this.ip}`}).then(login);
+        this.login();
     }
 //------------------------------------------------------------------------------
 
     login() {
-        return rp({
-            uri: util.format(loginURL, this.ip),
-            headers: {
-                'Authorization': this.cookie
-            }
+        return rp({uri: `http://${this.ip}`})
+        .then(() => {
+            return rp({
+                uri: util.format(loginURL, this.ip),
+                headers: {
+                    'Authorization': this.cookie
+                }
+            });
         })
         .then((response) => {
             console.log(response);
