@@ -30,7 +30,12 @@ class TpLink {
         })
         .then((response) => {
             console.log(response);
-            console.log(response.match(sessionRegex));
+
+            var matches = response.match(sessionRegex);
+            if(matches.length != 2) { return; }
+
+            this.sessionId = matches[1];
+            this.loggedIn = true;
         });
     }
 //------------------------------------------------------------------------------
@@ -71,9 +76,17 @@ class TpLink {
         })
         .then((response) => {
             console.log(response);
+
             var matches = response.match(trafficArrayRegex);
-            console.log(matches);
-            console.log(eval(matches[1]));
+            if(matches.length != 2) { return []; }
+
+            var traffic = [];
+
+            eval(matches[1]).forEach((host) => {
+                // traffic.push([host[1], host[5]]);
+            });
+
+            return traffic;
         });
     }
 }
