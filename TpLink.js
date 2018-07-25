@@ -65,7 +65,7 @@ class TpLink {
     getTraffic() {
         if(!this.loggedIn) { return; }
 
-        rp({
+        return rp({
             uri: util.format(trafficURL, this.ip, this.sessionId)
         })
         .then((response) => {
