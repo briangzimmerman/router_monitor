@@ -37,13 +37,12 @@ class TpLink {
             if(!matches || matches.length != 2) { return; }
 
             this.sessionId = matches[1];
-        });
+        })
+        .catch((err) => { console.log(err); });
     }
 //------------------------------------------------------------------------------
 
     logout() {
-        if(!this.isLoggedIn()) { return; }
-
         return rp({
             uri: util.format(logoutURL, this.ip, this.sessionId),
             headers: {
@@ -53,13 +52,12 @@ class TpLink {
         })
         .then(() => {
             this.sessionId = false;
-        });
+        })
+        .catch((err) => { console.log(err); });
     }
 //------------------------------------------------------------------------------
 
     reboot() {
-        if(!this.isLoggedIn()) { return; }
-
         return rp({
             uri: util.format(rebootURL, this.ip, this.sessionId) + '?Reboot=Reboot',
             headers: {
@@ -69,12 +67,12 @@ class TpLink {
         })
         .then(() => {
             this.sessionId = false;
-        });
+        })
+        .catch((err) => { console.log(err); });
     }
 //------------------------------------------------------------------------------
 
     getTraffic() {
-        if(!this.isLoggedIn()) { return; }
         var uri = util.format(trafficURL, this.ip, this.sessionId) +
             '?Refresh=Refresh&Num_per_page=100&Goto_page=1&sortType=1&interval=5';
 
@@ -100,7 +98,8 @@ class TpLink {
             }
 
             return traffic;
-        });
+        })
+        .catch((err) => { console.log(err); });
     }
 }
 
