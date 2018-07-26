@@ -2,3 +2,6 @@ To configure for your router, copy config.json.template to config.json
 and enter your router's ip address and a username and password.
 
 To test code or mess around, make a directory called testing.
+
+Any scripts you want to make, such as one to reboot the router periodically,
+can go in a directory called scripts.
