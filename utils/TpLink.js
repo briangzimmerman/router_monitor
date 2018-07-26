@@ -5,9 +5,9 @@ const util = require('util');
 const loginURL = 'http://%s/userRpm/LoginRpm.htm?Save=Save';
 const logoutURL = 'http://%s/%s/userRpm/LogoutRpm.htm';
 const rebootURL = 'http://%s/%s/userRpm/SysRebootRpm.htm';
-const trafficURL = 'http://%s/%s/userRpm/StatusRpm.htm';
+const trafficURL = 'http://%s/%s/userRpm/SystemStatisticRpm.htm';
 const sessionRegex = /http:\/\/[0-9a-zA-Z.]+\/([A-Z]{16})\/userRpm\/Index\.htm/;
-const trafficArrayRegex = /var statistList = (.*?);\s*/;
+const trafficArrayRegex = /var statList = (new Array\([^<]*\));/;
 
 class TpLink {
     constructor(ip, username, password) {
@@ -28,15 +28,13 @@ class TpLink {
             return rp({
                 uri: util.format(loginURL, this.ip),
                 headers: {
-                    'Authorization': this.cookie
+                    'Cookie': `Authorization=${this.cookie}`
                 }
             });
         })
         .then((response) => {
-            console.log(response);
-
             var matches = response.match(sessionRegex);
-            if(matches.length != 2) { return; }
+            if(!matches || matches.length != 2) { return; }
 
             this.sessionId = matches[1];
         });
@@ -49,7 +47,7 @@ class TpLink {
         return rp({
             uri: util.format(logoutURL, this.ip, this.sessionId),
             headers: {
-                'Authorization': this.cookie,
+                'Cookie': `Authorization=${this.cookie}`,
                 'Referer': util.format(trafficURL, this.ip, this.sessionId)
             }
         })
@@ -65,7 +63,7 @@ class TpLink {
         return rp({
             uri: util.format(rebootURL, this.ip, this.sessionId) + '?Reboot=Reboot',
             headers: {
-                'Authorization': this.cookie,
+                'Cookie': `Authorization=${this.cookie}`,
                 'Referer': util.format(rebootURL, this.ip, this.sessionId)
             }
         })
@@ -81,21 +79,23 @@ class TpLink {
         return rp({
             uri: util.format(trafficURL, this.ip, this.sessionId),
             headers: {
-                'Authorization': this.cookie,
+                'Cookie': `Authorization=${this.cookie}`,
                 'Referer': util.format(trafficURL, this.ip, this.sessionId)
             }
         })
         .then((response) => {
-            console.log(response);
-
             var matches = response.match(trafficArrayRegex);
-            if(matches.length != 2) { return []; }
+            if(!matches || matches.length != 2) { return []; }
 
             var traffic = [];
+            var stats = eval(matches[1]);
 
-            eval(matches[1]).forEach((host) => {
-                // traffic.push([host[1], host[5]]);
-            });
+            for(var idx = 0; idx < stats.length - 2; idx += 13) {
+                traffic.push({
+                    ip: stats[idx + 1],
+                    bytes: stats[idx + 6]
+                });
+            }
 
             return traffic;
         });

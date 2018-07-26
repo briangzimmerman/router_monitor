@@ -5,3 +5,5 @@ testing/
 scripts/
 
 config.json
+
+package-lock.json
