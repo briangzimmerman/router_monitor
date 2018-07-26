@@ -75,12 +75,14 @@ class TpLink {
 
     getTraffic() {
         if(!this.isLoggedIn()) { return; }
+        var uri = util.format(trafficURL, this.ip, this.sessionId) +
+            '?Refresh=Refresh&Num_per_page=100&Goto_page=1&sortType=1&interval=5';
 
         return rp({
-            uri: util.format(trafficURL, this.ip, this.sessionId),
+            uri,
             headers: {
                 'Cookie': `Authorization=${this.cookie}`,
-                'Referer': util.format(trafficURL, this.ip, this.sessionId)
+                'Referer': uri
             }
         })
         .then((response) => {
