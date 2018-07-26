@@ -34,7 +34,7 @@ class TpLink {
         })
         .then((response) => {
             var matches = response.match(sessionRegex);
-            if(!matches || matches.length != 2) { return; }
+            if(!matches) { return; }
 
             this.sessionId = matches[1];
         })
@@ -85,7 +85,7 @@ class TpLink {
         })
         .then((response) => {
             var matches = response.match(trafficArrayRegex);
-            if(!matches || matches.length != 2) { return []; }
+            if(!matches) { return []; }
 
             var traffic = [];
             var stats = eval(matches[1]);
