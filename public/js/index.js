@@ -1,55 +1,85 @@
+var traffic_history = {};
+var ctx = document.getElementById("myChart").getContext('2d');
+var fontSize = 20;
+var units = ['B', 'KB', 'MB'];
 var socket = io();
 socket.emit('join', 'traffic');
 
-var ctx = document.getElementById("myChart").getContext('2d');
 var myChart = new Chart(ctx, {
     type: 'line',
-    data: {
-        labels: ['60', '30', '0'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
     options: {
         scales: {
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    fontSize: 20
+                    fontSize: fontSize
                 }
             }],
             xAxes: [{
                 ticks: {
-                    fontSize: 20
+                    fontSize: fontSize
                 }
             }]
         },
         legend: {
             labels: {
-                fontSize: 20
+                fontSize: fontSize
             }
         }
     }
 });
 
-socket.on('traffic_update', (data) => {
-    console.log(data);
+socket.on('traffic_update', (traffic) => {
+    traffic = JSON.parse(traffic);
+    updateHistory(traffic);
+    var unitPow = findMaxUnit();
+    console.log(units[unitPow]);
+    console.log(formatTrafficHistory(unitPow));
 });
+
+function popChart(chart, traffic) {
+    return;
+}
+
+function formatTrafficHistory(unitPow) {
+    var formattedTraffic = {};
+
+    Object.keys(traffic_history).forEach((key) => {
+        formattedTraffic[key] = traffic_history[key].map((bytes) => {
+            return (bytes / Math.pow(1024, unitPow)).toFixed(2);
+        });
+    })
+
+    return formattedTraffic;
+}
+
+function updateHistory(traffic) {
+    var total = 0;
+
+    traffic.forEach((host) => {
+        if(!traffic_history[host.ip]) { traffic_history[host.ip] = []; }
+
+        traffic_history[host.ip].push(host.bytes);
+
+        if(traffic_history[host.ip].length > 12) {
+            traffic_history[host.ip].pop();
+        }
+
+        total += host.bytes;
+    });
+
+    if(!traffic_history['Total']) { traffic_history['Total'] = []; }
+
+    traffic_history['Total'].push(total);
+    if(traffic_history['Total'].length > 12) { traffic_history['Total'].pop; }
+}
+
+function findMaxUnit() {
+    var max = 0;
+
+    traffic_history['Total'].forEach((bytes) => {
+        if(bytes > max) { max = bytes; }
+    })
+
+    return max == 0 ? 0 : Math.floor(Math.log(max) / Math.log(1024));
+}
