@@ -48,5 +48,8 @@ router.login()
 function createService() {
     return setInterval(() => {
         router.getTraffic()
+        .then((traffic) => {
+            io.to('traffic').emit('traffic_update', JSON.stringify(traffic));
+        });
     }, 5000);
 }

@@ -1,0 +1,10 @@
+#myChart {
+    height: 66% !important;
+    width: 800px !important;
+}
+
+#runway {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
