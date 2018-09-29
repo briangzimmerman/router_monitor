@@ -1,0 +1,39 @@
+:root {
+    --height: 70px;
+}
+
+#nav_container {
+    width: 100vw;
+    height: var(--height);
+    background: #AA3939;
+    box-shadow: 0 4px 2px -2px gray;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: whitesmoke;
+}
+
+#nav_container a {
+    color: whitesmoke;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 19px;
+}
+
+#nav_container a:not(:last-child) {
+    padding-right: 15px;
+}
+
+#main_container {
+    padding-top: var(--height);
+    height: calc(100vh - var(--height) - 10px);
+    overflow: hidden;
+}
+
+#runway {
+    height: 100%;
+    overflow-y: auto;
+    padding-top: 10px
+}
+
