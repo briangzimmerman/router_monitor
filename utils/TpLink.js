@@ -93,6 +93,8 @@ class TpLink {
             for(var idx = 0; idx < stats.length - 2; idx += 13) {
                 traffic.push({
                     ip: stats[idx + 1],
+                    mac: stats[idx + 2],
+                    total_bytes: stats[idx + 4],
                     bytes: stats[idx + 6]
                 });
             }
