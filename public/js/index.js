@@ -63,7 +63,7 @@ function updateHistory(traffic) {
         traffic_history[host.ip].push(host.bytes);
 
         if(traffic_history[host.ip].length > 12) {
-            traffic_history[host.ip].pop();
+            traffic_history[host.ip].shift();
         }
 
         total += host.bytes;
@@ -72,7 +72,7 @@ function updateHistory(traffic) {
     if(!traffic_history['Total']) { traffic_history['Total'] = []; }
 
     traffic_history['Total'].push(total);
-    if(traffic_history['Total'].length > 12) { traffic_history['Total'].pop; }
+    if(traffic_history['Total'].length > 12) { traffic_history['Total'].shift(); }
 }
 
 function findMaxUnit() {
