@@ -2,7 +2,6 @@ var traffic_history = {};
 var ctx = document.getElementById("myChart").getContext('2d');
 var fontSize = 20;
 var units = ['B', 'KB', 'MB'];
-var interval = 5; //5 Seconds
 var socket = io();
 socket.emit('join', 'traffic');
 
@@ -47,7 +46,7 @@ function formatTrafficHistory(unitPow) {
 
     Object.keys(traffic_history).forEach((key) => {
         formattedTraffic[key] = traffic_history[key].map((bytes) => {
-            return ((bytes / interval) / Math.pow(1024, unitPow)).toFixed(2);
+            return (bytes / Math.pow(1024, unitPow)).toFixed(2);
         });
     })
 
@@ -82,5 +81,5 @@ function findMaxUnit() {
         if(bytes > max) { max = bytes; }
     })
 
-    return max == 0 ? 0 : Math.floor(Math.log(max / interval) / Math.log(1024));
+    return max == 0 ? 0 : Math.floor(Math.log(max) / Math.log(1024));
 }
