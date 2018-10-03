@@ -7,6 +7,9 @@ socket.emit('join', 'traffic');
 
 var trafficChart = new Chart(ctx, {
     type: 'line',
+    data: {
+        labels: [60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0]
+    },
     options: {
         scales: {
             yAxes: [{
@@ -30,15 +33,24 @@ var trafficChart = new Chart(ctx, {
 });
 
 socket.on('traffic_update', (traffic) => {
-    traffic = JSON.parse(traffic);
+    // traffic = JSON.parse(traffic);
+    console.log(traffic);
     updateHistory(traffic);
     var unitPow = findMaxUnit();
-    console.log(units[unitPow]);
-    console.log(formatTrafficHistory(unitPow));
+    popChart(trafficChart, formatTrafficHistory(unitPow));
 });
 
-function popChart(chart) {
-    return;
+function popChart(chart, traffic) {
+    var hosts = Object.keys(traffic).sort();
+    console.log(hosts);
+    chart.data.datasets = [];
+    hosts.forEach((host) => {
+        chart.data.datasets.push({
+            label: host,
+            data: traffic[host].reverse()
+        });
+    });
+    chart.update();
 }
 
 function formatTrafficHistory(unitPow) {
