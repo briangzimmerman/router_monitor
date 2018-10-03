@@ -47,7 +47,7 @@ function popChart(chart, traffic) {
     hosts.forEach((host) => {
         chart.data.datasets.push({
             label: host,
-            data: traffic[host].reverse()
+            data: reverse(traffic[host])
         });
     });
     chart.update();
@@ -94,4 +94,15 @@ function findMaxUnit() {
     })
 
     return max == 0 ? 0 : Math.floor(Math.log(max) / Math.log(1024));
+}
+
+function reverse(arr) {
+    
+    var reversed = []
+    
+    for (var i = arr.length - 1; i >= 0; i--) {
+        reversed.push(arr[i])
+    }
+
+    return reversed;
 }
