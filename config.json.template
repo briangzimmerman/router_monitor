@@ -1,5 +1,12 @@
 {
     "ip": "",
     "username": "",
-    "password": ""
+    "password": "",
+    "is_testing": true,
+    "development": {
+        "MONGODB_URI": "mongodb://localhost:27017/RouterMonitorTest"
+    },
+    "production": {
+        "MONGODB_URI": "mongodb://localhost:27017/RouterMonitor"
+    }
 }
