@@ -5,8 +5,8 @@ let Device = mongoose.model('Device', {
         type: String,
         required: true,
         trim: true,
-        minlength: 16,
-        maxlLength: 16,
+        minlength: 12,
+        maxlength: 12,
         unique: true,
         uppercase: true
     },

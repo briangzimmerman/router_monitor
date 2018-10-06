@@ -6,6 +6,9 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const config = require('./config.json');
 const TpLink = require('./utils/TpLink');
+const {mongoose} = require('./db/mongoose');
+const {Device} = require('./db/models/device');
+const {Traffic} = require('./db/models/traffic');
 
 var router = new TpLink(config.ip, config.username, config.password);
 
@@ -22,6 +25,11 @@ server.listen(port, () => {
 
 io.on('connection', (socket) => {
     console.log('User Connected.');
+
+    Device.find()
+    .then((devices) => {
+        socket.emit('devices', devices);
+    });
 
     socket.on('join', (room) => {
         socket.join(room);

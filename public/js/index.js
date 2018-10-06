@@ -2,6 +2,7 @@ var traffic_history = {};
 var ctx = document.getElementById("myChart").getContext('2d');
 var fontSize = 20;
 var units = ['B', 'KB', 'MB'];
+var devices = {};
 var colors = [
     '#001f3f',
     '#0074D9',
@@ -57,6 +58,14 @@ socket.on('traffic_update', (traffic) => {
     popChart(trafficChart, formatTrafficHistory(unitPow), unitPow);
 });
 
+socket.on('devices', (devs) => {
+    devs.forEach((device) => {
+        devices[device.mac] = device.nickname;
+    });
+
+    console.log(devices);
+});
+
 function popChart(chart, traffic, unitPow) {
     var hosts = Object.keys(traffic).sort();
     console.log(hosts);
@@ -92,12 +101,14 @@ function updateHistory(traffic) {
     var total = 0;
 
     traffic.forEach((host) => {
-        if(!traffic_history[host.ip]) { traffic_history[host.ip] = [0,0,0,0,0,0,0,0,0,0,0,0]; }
+        var display = devices[formatMac(host.mac)] || host.ip;
 
-        traffic_history[host.ip].push(host.bytes);
+        if(!traffic_history[display]) { traffic_history[display] = [0,0,0,0,0,0,0,0,0,0,0,0]; }
 
-        if(traffic_history[host.ip].length > 12) {
-            traffic_history[host.ip].shift();
+        traffic_history[display].push(host.bytes);
+
+        if(traffic_history[display].length > 12) {
+            traffic_history[display].shift();
         }
 
         total += host.bytes;
