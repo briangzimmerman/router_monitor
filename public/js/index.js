@@ -2,13 +2,30 @@ var traffic_history = {};
 var ctx = document.getElementById("myChart").getContext('2d');
 var fontSize = 20;
 var units = ['B', 'KB', 'MB'];
+var colors = [
+    '#001f3f',
+    '#0074D9',
+    '#7FDBFF',
+    '#39CCCC',
+    '#3D9970',
+    '#2ECC40',
+    '#01FF70',
+    '#FFDC00',
+    '#FF851B',
+    '#FF4136',
+    '#85144b',
+    '#F012BE',
+    '#B10DC9',
+    '#AAAAAA',
+    '#DDDDDD'
+];
 var socket = io();
 socket.emit('join', 'traffic');
 
 var trafficChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: [60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0]
+        labels: [55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0]
     },
     options: {
         scales: {
@@ -37,19 +54,25 @@ socket.on('traffic_update', (traffic) => {
     console.log(traffic);
     updateHistory(traffic);
     var unitPow = findMaxUnit();
-    popChart(trafficChart, formatTrafficHistory(unitPow));
+    popChart(trafficChart, formatTrafficHistory(unitPow), unitPow);
 });
 
-function popChart(chart, traffic) {
+function popChart(chart, traffic, unitPow) {
     var hosts = Object.keys(traffic).sort();
     console.log(hosts);
     chart.data.datasets = [];
-    hosts.forEach((host) => {
+    hosts.forEach((host, index) => {
         chart.data.datasets.push({
             label: host,
-            data: reverse(traffic[host])
+            data: traffic[host],
+            backgroundColor: colors[index % colors.length]
         });
     });
+    chart.options.scales.yAxes[0].scaleLabel = {
+        display: true,
+        labelString: units[unitPow] + 'ps',
+        fontSize: fontSize
+    }
     chart.update();
 }
 
@@ -69,7 +92,7 @@ function updateHistory(traffic) {
     var total = 0;
 
     traffic.forEach((host) => {
-        if(!traffic_history[host.ip]) { traffic_history[host.ip] = []; }
+        if(!traffic_history[host.ip]) { traffic_history[host.ip] = [0,0,0,0,0,0,0,0,0,0,0,0]; }
 
         traffic_history[host.ip].push(host.bytes);
 
@@ -80,7 +103,7 @@ function updateHistory(traffic) {
         total += host.bytes;
     });
 
-    if(!traffic_history['Total']) { traffic_history['Total'] = []; }
+    if(!traffic_history['Total']) { traffic_history['Total'] = [0,0,0,0,0,0,0,0,0,0,0,0]; }
 
     traffic_history['Total'].push(total);
     if(traffic_history['Total'].length > 12) { traffic_history['Total'].shift(); }
@@ -94,15 +117,4 @@ function findMaxUnit() {
     })
 
     return max == 0 ? 0 : Math.floor(Math.log(max) / Math.log(1024));
-}
-
-function reverse(arr) {
-    
-    var reversed = []
-    
-    for (var i = arr.length - 1; i >= 0; i--) {
-        reversed.push(arr[i])
-    }
-
-    return reversed;
 }
