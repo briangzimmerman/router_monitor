@@ -11,6 +11,7 @@ const {Device} = require('./db/models/device');
 const {Traffic} = require('./db/models/traffic');
 
 var router = new TpLink(config.ip, config.username, config.password);
+var traffic_interval = false;
 
 
 //------------------------------- Server Pages ---------------------------------
@@ -26,6 +27,15 @@ server.listen(port, () => {
 io.on('connection', (socket) => {
     console.log('User Connected.');
 
+    if(!router.isLoggedIn()) {
+        console.log('Logging in');
+
+        router.login()
+        .then(() => {
+            traffic_interval = createService();
+        });
+    }
+
     Device.find()
     .then((devices) => {
         socket.emit('devices', devices);
@@ -34,6 +44,15 @@ io.on('connection', (socket) => {
     socket.on('join', (room) => {
         socket.join(room);
     });
+
+    socket.on('disconnect', () => {
+        if(!io.engine.clientsCount) {
+            console.log('Logging out');
+
+            clearInterval(traffic_interval);
+            router.logout();
+        }
+    });
 });
 
 app.get('/', (req, res) => {
@@ -41,14 +60,26 @@ app.get('/', (req, res) => {
 });
 
 app.get('/history', (req, res) => {
-    res.render('history.hbs');
+    var devices;
+
+    Device.find()
+    .then((d) => {
+        devices = d;
+        return Traffic.find();
+    })
+    .then((history) => {
+        res.render('history.hbs', {
+            history: JSON.stringify(history),
+            devices: JSON.stringify(devices)
+        });
+    })
 });
 
 //------------------------------- Router Stuff ---------------------------------
 
 router.login()
 .then(() => {
-    createService();
+    traffic_interval = createService();
 });
 
 //--------------------------------- Functions ----------------------------------

@@ -5,8 +5,8 @@ let Traffic = mongoose.model('Traffic', {
         type: String,
         reqiured: true,
         trim: true,
-        maxlength: 16,
-        minlength: 16,
+        maxlength: 12,
+        minlength: 12,
         uppercase: true
     },
     date: {
@@ -20,6 +20,6 @@ let Traffic = mongoose.model('Traffic', {
     }
 });
 
-module.export = {
+module.exports = {
     Traffic
 };
