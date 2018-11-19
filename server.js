@@ -75,13 +75,6 @@ app.get('/history', (req, res) => {
     })
 });
 
-//------------------------------- Router Stuff ---------------------------------
-
-router.login()
-.then(() => {
-    traffic_interval = createService();
-});
-
 //--------------------------------- Functions ----------------------------------
 
 function createService() {
