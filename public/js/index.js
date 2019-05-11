@@ -46,9 +46,15 @@ var trafficChart = new Chart(ctx, {
             labels: {
                 fontSize: fontSize
             }
-        }
-    },
-    responsive: true
+        },
+        padding: {
+            top: 100,
+            left: 100,
+            right: 100,
+            bottom: 100
+        },
+        responsive: true
+    }
 });
 
 socket.on('traffic_update', (traffic) => {
