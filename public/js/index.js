@@ -1,6 +1,6 @@
 var traffic_history = {};
 var ctx = document.getElementById("myChart").getContext('2d');
-var fontSize = 20;
+var fontSize = 16;
 var units = ['B', 'KB', 'MB'];
 var devices = {};
 var colors = [
@@ -47,7 +47,8 @@ var trafficChart = new Chart(ctx, {
                 fontSize: fontSize
             }
         }
-    }
+    },
+    responsive: true
 });
 
 socket.on('traffic_update', (traffic) => {
