@@ -47,11 +47,13 @@ var trafficChart = new Chart(ctx, {
                 fontSize: fontSize
             }
         },
-        padding: {
-            top: 100,
-            left: 100,
-            right: 100,
-            bottom: 100
+        layout: {
+            padding: {
+                top: 100,
+                left: 100,
+                right: 100,
+                bottom: 100
+            }
         },
         responsive: true
     }
